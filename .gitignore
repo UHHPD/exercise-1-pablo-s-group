@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+# Project executables
+hallo
+summieren
+
+# Build script
+run.sh
