@@ -37,10 +37,5 @@ summieren
 stichprobe
 stichprobe2
 
-# Generated output files
-datensumme.txt
-mittelwerte.txt
-varianzen.txt
-
 # Build script
 run.sh
