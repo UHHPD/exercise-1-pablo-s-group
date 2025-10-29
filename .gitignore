@@ -34,6 +34,7 @@
 # Project executables
 hallo
 summieren
+stichprobe
 
 # Build script
 run.sh
