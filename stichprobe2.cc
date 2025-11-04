@@ -2,70 +2,46 @@
 #include <fstream>
 #include <vector>
 #include <cmath>
-
 using namespace std;
 
 int main() {
-    const int N = 234;
-    const int group_size = 9;
-    const int num_groups = N / group_size;
+    // Clear contents of output files
+    ofstream("mittelwerte.txt", ios::trunc).close();
+    ofstream("varianzen.txt", ios::trunc).close();
 
-    ifstream file("datensumme.txt");
-    if (!file.is_open()) {
-        cerr << "Error: Could not open 'datensumme.txt'." << endl;
+    ifstream input("datensumme.txt");
+    ofstream out_mean("mittelwerte.txt");
+    ofstream out_var("varianzen.txt");
+
+    if (!input) {
+        cerr << "Error: could not open datensumme.txt\n";
         return 1;
     }
 
     vector<double> data;
-    double value;
-    while (file >> value) {
-        data.push_back(value);
-    }
-    file.close();
+    double x;
+    while (input >> x) data.push_back(x);
 
-    ofstream mean_out("mittelwerte.txt");
-    ofstream var_out("varianzen.txt");
-    if (!mean_out.is_open() || !var_out.is_open()) {
-        cerr << "Error: Could not open output files." << endl;
-        return 1;
-    }
-
-    vector<double> means;
-    vector<double> variances;
-
-    for (int g = 0; g < num_groups; ++g) {
+    const int N = 9;
+    for (size_t i = 0; i < data.size()/N; i++) {
+        
         double sum = 0.0;
-        for (int i = 0; i < group_size; ++i)
-            sum += data[g * group_size + i];
-
-        double mean = sum / group_size;
-        means.push_back(mean);
-        mean_out << mean << endl;
+        for (size_t j = 0; j < N; j++){
+            sum += data[i*N + j];
+        }
+        
+        double mean = sum / N;
 
         double var_sum = 0.0;
-        for (int i = 0; i < group_size; ++i) {
-            double diff = data[g * group_size + i] - mean;
+        for (size_t j = 0; j < N; j++) {
+            double diff = data[i*N + j] - mean;
             var_sum += diff * diff;
         }
+        double variance = var_sum / N;
 
-        double variance = var_sum / (group_size - 1); // Bessel’s correction
-        variances.push_back(variance);
-        var_out << variance << endl;
+        out_mean << mean << "\n";
+        out_var << variance << "\n";
     }
-
-    mean_out.close();
-    var_out.close();
-
-    double mean_of_means = 0.0;
-    for (double m : means) mean_of_means += m;
-    mean_of_means /= means.size();
-
-    double mean_of_variances = 0.0;
-    for (double v : variances) mean_of_variances += v;
-    mean_of_variances /= variances.size();
-
-    cout << mean_of_means << endl;
-    cout << mean_of_variances << endl;
 
     return 0;
 }
